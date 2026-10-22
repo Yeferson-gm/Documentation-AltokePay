@@ -38,7 +38,6 @@ const config: Config = {
               badge: true,
             },
           },
-          editUrl: 'https://github.com/Yeferson-gm/Documentation-AltokePay/tree/main/',
         },
         blog: false,
         theme: {
@@ -116,6 +115,8 @@ const config: Config = {
           href: 'https://github.com/Yeferson-gm/EJEMPLO-DE-INCORPORACION-DE-ALTOKEPAY',
           label: 'Ejemplo completo',
           position: 'left',
+          className: 'navbar-github-example',
+          'aria-label': 'Ejemplo completo de integración en GitHub',
         },
         {
           href: 'https://altokepay.site',
@@ -127,12 +128,6 @@ const config: Config = {
           position: 'right',
           dropdownActiveClassDisabled: true,
           versions: {current: {label: 'v1'}},
-        },
-        {
-          href: 'https://github.com/Yeferson-gm/Documentation-AltokePay',
-          label: 'Repositorio',
-          position: 'right',
-          'aria-label': 'Repositorio de documentación de AltokePay en GitHub',
         },
       ],
     },
@@ -165,13 +160,7 @@ const config: Config = {
         },
         {
           title: 'AltokePay',
-          items: [
-            {label: 'Sitio web', href: 'https://altokepay.site'},
-            {
-              label: 'Repositorio',
-              href: 'https://github.com/Yeferson-gm/Documentation-AltokePay',
-            },
-          ],
+          items: [{label: 'Sitio web', href: 'https://altokepay.site'}],
         },
       ],
       copyright: `© ${new Date().getFullYear()} AltokePay. Documentación técnica.`,
