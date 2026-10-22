@@ -65,11 +65,11 @@ bun run deploy:cloudflare
 
 La ruta de Worker reutiliza el registro DNS proxied existente y su certificado TLS. El hostname debe permanecer bajo la zona `altokepay.site`; no elimines ni reemplaces registros de otros servicios.
 
-Para revertir, vuelve a desplegar una revisión conocida y validada del repositorio o restaura una versión anterior desde el historial de despliegues de Cloudflare. Después verifica la portada, `/docs/1/api/checkouts` y `/docs/1/integration/webhooks`.
+Para revertir, vuelve a desplegar una revisión conocida y validada del repositorio o restaura una versión anterior desde el historial de despliegues de Cloudflare. Después verifica la portada, `/docs/v1/api/checkouts` y `/docs/v1/integration/webhooks`.
 
 ## Versión documental
 
-Docusaurus trata `docs/` como la versión activa **1** mediante `lastVersion: "current"`. La documentación se publica bajo `/docs/1/*` y el navbar muestra el selector oficial `docsVersionDropdown` como **v1**. Mientras no exista v2 se mantiene una sola carpeta autoritativa, evitando duplicación entre `docs/` y `versioned_docs/`.
+Docusaurus trata `docs/` como la versión activa **v1** mediante `lastVersion: "current"`. La documentación se publica bajo `/docs/v1/*` y el navbar muestra el selector oficial `docsVersionDropdown` como **v1**. Mientras no exista v2 se mantiene una sola carpeta autoritativa, evitando duplicación entre `docs/` y `versioned_docs/`.
 
 ## Contenido
 

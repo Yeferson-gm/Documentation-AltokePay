@@ -11,20 +11,20 @@ const sections = [
     title: 'Arquitectura',
     description:
       'Conoce los límites de confianza, la autoridad del backend y el flujo de una confirmación de pago.',
-    to: '/docs/1/architecture',
+    to: '/docs/v1/architecture',
   },
   {
     eyebrow: '02 · Construir',
     title: 'Client API',
     description: 'Integra Checkouts y Links de Pago con contratos acotados, OAuth e idempotencia.',
-    to: '/docs/1/api',
+    to: '/docs/v1/api',
   },
   {
     eyebrow: '03 · Verificar',
     title: 'Guías de integración',
     description:
       'Implementa webhooks firmados y recuperación de estado sin exponer credenciales al navegador.',
-    to: '/docs/1/integration',
+    to: '/docs/v1/integration',
   },
 ] as const;
 
@@ -46,10 +46,10 @@ export default function Home(): ReactNode {
               Links de Pago y webhooks de AltokePay.
             </p>
             <div className={styles.actions}>
-              <Link className="button button--primary button--lg" to="/docs/1/intro">
+              <Link className="button button--primary button--lg" to="/docs/v1/intro">
                 Empezar
               </Link>
-              <Link className="button button--outline button--lg" to="/docs/1/api">
+              <Link className="button button--outline button--lg" to="/docs/v1/api">
                 Explorar la API
               </Link>
               <Link

@@ -13,19 +13,19 @@
   },
   "link.item.label.Introducción": {
     "message": "Introducción",
-    "description": "The label of footer link with label=Introducción linking to /docs/1/intro"
+    "description": "The label of footer link with label=Introducción linking to /docs/v1/intro"
   },
   "link.item.label.Arquitectura": {
     "message": "Arquitectura",
-    "description": "The label of footer link with label=Arquitectura linking to /docs/1/architecture"
+    "description": "The label of footer link with label=Arquitectura linking to /docs/v1/architecture"
   },
   "link.item.label.Client API": {
     "message": "Client API",
-    "description": "The label of footer link with label=Client API linking to /docs/1/api"
+    "description": "The label of footer link with label=Client API linking to /docs/v1/api"
   },
   "link.item.label.Guía de integración": {
     "message": "Guía de integración",
-    "description": "The label of footer link with label=Guía de integración linking to /docs/1/integration"
+    "description": "The label of footer link with label=Guía de integración linking to /docs/v1/integration"
   },
   "link.item.label.Ejemplo completo": {
     "message": "Ejemplo completo",

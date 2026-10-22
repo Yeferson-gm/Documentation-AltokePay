@@ -33,7 +33,7 @@ const config: Config = {
           versions: {
             current: {
               label: 'v1',
-              path: '1',
+              path: 'v1',
               banner: 'none',
               badge: true,
             },
@@ -144,15 +144,15 @@ const config: Config = {
         {
           title: 'Documentación',
           items: [
-            {label: 'Introducción', to: '/docs/1/intro'},
-            {label: 'Arquitectura', to: '/docs/1/architecture'},
-            {label: 'Client API', to: '/docs/1/api'},
+            {label: 'Introducción', to: '/docs/v1/intro'},
+            {label: 'Arquitectura', to: '/docs/v1/architecture'},
+            {label: 'Client API', to: '/docs/v1/api'},
           ],
         },
         {
           title: 'Integración',
           items: [
-            {label: 'Guía de integración', to: '/docs/1/integration'},
+            {label: 'Guía de integración', to: '/docs/v1/integration'},
             {
               label: 'Ejemplo completo',
               href: 'https://github.com/Yeferson-gm/EJEMPLO-DE-INCORPORACION-DE-ALTOKEPAY',
