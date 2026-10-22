@@ -79,8 +79,8 @@ const config: Config = {
       respectPrefersColorScheme: false,
     },
     announcementBar: {
-      id: 'client-api-v1',
-      content: `<strong>La documentación de Client API v1 ya está disponible</strong> · <a href="${quickstartUrl}">Comenzar la integración</a>`,
+      id: 'client-api-v1-payer-identity',
+      content: `<strong>Guías v1 actualizadas:</strong> integra Checkouts y Links de Pago con DNI o nombre completo · <a href="${quickstartUrl}">Ver inicio rápido</a>`,
       backgroundColor: '#faf7fc',
       textColor: '#30233a',
       isCloseable: true,
