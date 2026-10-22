@@ -53,7 +53,7 @@ La documentación se publica como activos estáticos, sin un Worker de aplicaci�
 
 - Worker: `altokepay-documentation`;
 - directorio publicado: `build/`;
-- dominio personalizado: `development.altokepay.site`.
+- ruta de zona: `development.altokepay.site/*`.
 
 Antes de desplegar, autentica Wrangler de forma interactiva con `bunx wrangler login` o configura `CLOUDFLARE_API_TOKEN` en el entorno seguro del operador o de CI. Nunca guardes el token en el repositorio, archivos `.env`, documentación ni historial de comandos.
 
@@ -63,7 +63,7 @@ bun run deploy:cloudflare:dry-run
 bun run deploy:cloudflare
 ```
 
-Cloudflare administra el registro DNS y el certificado TLS del dominio personalizado. Si el despliegue informa un conflicto, revisa primero si existe un CNAME o una ruta anterior para ese mismo hostname; no elimines registros de otros servicios.
+La ruta de Worker reutiliza el registro DNS proxied existente y su certificado TLS. El hostname debe permanecer bajo la zona `altokepay.site`; no elimines ni reemplaces registros de otros servicios.
 
 Para revertir, vuelve a desplegar una revisión conocida y validada del repositorio o restaura una versión anterior desde el historial de despliegues de Cloudflare. Después verifica la portada, `/docs/1/api/checkouts` y `/docs/1/integration/webhooks`.
 

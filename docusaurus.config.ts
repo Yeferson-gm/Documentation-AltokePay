@@ -38,7 +38,7 @@ const config: Config = {
               badge: true,
             },
           },
-          editUrl: 'https://github.com/Yeferson-gm/AltokePay/tree/main/documentation/',
+          editUrl: 'https://github.com/Yeferson-gm/Documentation-AltokePay/tree/main/',
         },
         blog: false,
         theme: {
@@ -129,10 +129,10 @@ const config: Config = {
           versions: {current: {label: 'v1'}},
         },
         {
-          href: 'https://github.com/Yeferson-gm/AltokePay',
+          href: 'https://github.com/Yeferson-gm/Documentation-AltokePay',
           label: 'Repositorio',
           position: 'right',
-          'aria-label': 'Repositorio de AltokePay en GitHub',
+          'aria-label': 'Repositorio de documentación de AltokePay en GitHub',
         },
       ],
     },
@@ -169,7 +169,7 @@ const config: Config = {
             {label: 'Sitio web', href: 'https://altokepay.site'},
             {
               label: 'Repositorio',
-              href: 'https://github.com/Yeferson-gm/AltokePay',
+              href: 'https://github.com/Yeferson-gm/Documentation-AltokePay',
             },
           ],
         },

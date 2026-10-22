@@ -2,13 +2,14 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "altokepay-documentation",
   "compatibility_date": "2026-10-22",
+  "workers_dev": false,
   "assets": {
     "directory": "./build"
   },
   "routes": [
     {
-      "pattern": "development.altokepay.site",
-      "custom_domain": true
+      "pattern": "development.altokepay.site/*",
+      "zone_name": "altokepay.site"
     }
   ]
 }
