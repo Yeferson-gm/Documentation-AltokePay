@@ -75,7 +75,8 @@ const config: Config = {
       },
     },
     colorMode: {
-      respectPrefersColorScheme: true,
+      defaultMode: 'light',
+      respectPrefersColorScheme: false,
     },
     announcementBar: {
       id: 'client-api-v1',
