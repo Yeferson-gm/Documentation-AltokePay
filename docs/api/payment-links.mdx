@@ -1,0 +1,113 @@
+---
+sidebar_position: 6
+title: Links de Pago
+---
+
+import {PaymentLinkCreateExample} from '@site/src/components/ApiExamples';
+
+Un Link de Pago genera una página alojada que compartes mediante `publicUrl`.
+
+## Operaciones
+
+| Método | Endpoint | Scope | Éxito |
+|---|---|---|---|
+| `POST` | `/api/v1/client/payment-links` | `payment-links:write` | `201`; replay `200` |
+| `GET` | `/api/v1/client/payment-links/external/:externalId` | `payment-links:read` | `200` |
+| `GET` | `/api/v1/client/payment-links/:id` | `payment-links:read` | `200` |
+| `GET` | `/api/v1/client/payment-links/:id/status` | `payment-links:read` | `200` |
+| `POST` | `/api/v1/client/payment-links/:id/cancel` | `payment-links:write` | `200` |
+
+## Crear un Link
+
+Elige una sola variante y conserva la misma identidad durante todos los reintentos:
+
+```json title="Con DNI"
+{
+  "externalId": "link-order-2026-0001",
+  "amount": 42.5,
+  "message": "Pedido 2026-0001",
+  "expirationMinutes": 30,
+  "payerIdentityType": "dni",
+  "payerDni": "45382026"
+}
+```
+
+```json title="Con nombre completo"
+{
+  "externalId": "link-order-2026-0002",
+  "amount": 42.5,
+  "message": "Pedido 2026-0002",
+  "expirationMinutes": 30,
+  "payerIdentityType": "name",
+  "payerName": "María Quispe"
+}
+```
+
+<PaymentLinkCreateExample />
+
+| Campo | Regla |
+|---|---|
+| `amount` | Mínimo `0.01`, máximo dos decimales |
+| `message` | Entre 1 y 500 caracteres |
+| `expirationMinutes` | Entero entre 1 y 1440 |
+| `payerIdentityType` | Requerido: `dni` o `name` |
+| `payerDni` / `payerName` | Envía solo el campo que corresponde al tipo elegido |
+| `externalId` | Identidad opcional de 1–200 caracteres |
+| `Idempotency-Key` | Header opcional de 1–200 caracteres |
+
+Debes enviar al menos una identidad idempotente. Si usas ambas, `externalId` e `Idempotency-Key` deben coincidir. El body es estricto: un discriminador ausente, ambos campos de persona o propiedades desconocidas se rechazan.
+
+Con `dni`, AltokePay consulta al proveedor y exige que la respuesta repita el DNI solicitado. Con `name`, normaliza el nombre directo y no llama al proveedor. Un replay exitoso se verifica con una huella privada y no vuelve a consultar el DNI; cambiar de modo o valor bajo la misma identidad idempotente devuelve `409 IDEMPOTENCY_CONFLICT`.
+
+Respuesta resumida:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "7f9c10e1-8c8f-47ec-b51e-bf46fd41f109",
+    "externalId": "link-order-2026-0001",
+    "amount": 42.5,
+    "currency": "PEN",
+    "publicUrl": "https://example.altokepay.site/pay/capability-opaca",
+    "status": "awaiting_payment",
+    "expiresAt": "2026-10-21T18:30:00.000Z"
+  },
+  "requestId": "req_xxxxxxxxxxxxxxxxxxxx"
+}
+```
+
+:::danger[Usa `publicUrl` literalmente]
+No extraigas su contenido, no reconstruyas la URL y no la registres completa.
+:::
+
+## Idempotencia y recuperación
+
+| Identidad | Resultado desconocido |
+|---|---|
+| Con `externalId` | Consulta `/payment-links/external/:externalId`; ante `404`, repite el mismo `POST`. |
+| Solo `Idempotency-Key` | Repite el mismo `POST` con la misma key y payload. |
+
+Un replay idéntico devuelve `200` aunque el proveedor DNI se encuentre temporalmente indisponible después de la creación original. Si una creación nueva con DNI devuelve `503` y decides usar el nombre directo, crea otra intención local y utiliza un `externalId` y un `Idempotency-Key` nuevos. Reutilizar cualquiera de esas identidades con otro modo de persona, otro valor o cualquier otro dato devuelve `409 IDEMPOTENCY_CONFLICT`.
+
+## Leer estado y cancelar
+
+Confirma el pago de forma asíncrona con el webhook firmado `payment-link.paid`. `GET /payment-links/:id/status` devuelve un resumen del estado y la expiración; úsalo solo para la carga inicial o una recuperación puntual, nunca para polling.
+
+`POST /payment-links/:id/cancel` no requiere body. Repetir la cancelación de un Link ya cancelado es idempotente; un Link pagado o expirado responde `409 CONFLICT`.
+
+Estados: `awaiting_payment`, `paid`, `expired` y `canceled`.
+
+## Errores frecuentes
+
+| HTTP | Código | Acción |
+|---:|---|---|
+| `400` / `422` | `BAD_REQUEST` / `VALIDATION_ERROR` | Corrige los campos o la identidad |
+| `401` | `UNAUTHORIZED` | Renueva o revisa el token |
+| `403` | `FORBIDDEN` | Añade el scope requerido |
+| `404` | `NOT_FOUND` | Verifica el ID y el entorno |
+| `409` | `IDEMPOTENCY_CONFLICT` | No cambies los datos para esa identidad |
+| `409` | `CONFLICT` | La operación no aplica al estado actual |
+| `503` | `IDENTITY_SERVICE_UNAVAILABLE` | Reintenta igual o crea una intención nueva con `name` |
+
+Continúa con [Links de Pago alojados](../integration/hosted-payment-links.md).

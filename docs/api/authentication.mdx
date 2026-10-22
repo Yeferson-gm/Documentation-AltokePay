@@ -1,0 +1,151 @@
+---
+sidebar_position: 2
+title: Autenticación OAuth
+---
+
+import {TokenExchangeExample} from '@site/src/components/ApiExamples';
+
+
+Una API key es una credencial bootstrap. Intercámbiala por tokens OAuth y usa el access token en todas las rutas Client API.
+
+## Prerrequisitos
+
+- Una API key de la organización y entorno correctos.
+- Almacenamiento server-side para el refresh token.
+- Los scopes mínimos para las operaciones que realizará tu integración.
+
+:::danger[Credenciales solo en servidor]
+No envíes API keys, access tokens ni refresh tokens al navegador. La Client API usa tokens Bearer; no acepta la API key directamente.
+:::
+
+Base oficial: `https://api.altokepay.site`.
+
+## Obtener tokens
+
+**`POST https://api.altokepay.site/oauth/token`**
+
+<TokenExchangeExample />
+
+:::note[Java]
+El ejemplo Java es un programa Java 21 y utiliza Jackson Databind para serializar y validar JSON. Añade `com.fasterxml.jackson.core:jackson-databind` con la versión estable aprobada por tu proyecto.
+:::
+
+Respuesta `200`:
+
+```json
+{
+  "success": true,
+  "data": {
+    "tokenType": "Bearer",
+    "accessToken": "ptpa_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "refreshToken": "ptpr_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "accessTokenExpiresAt": "2026-10-21T18:15:00.000Z",
+    "refreshTokenExpiresAt": "2026-11-20T18:00:00.000Z",
+    "scopes": ["checkouts:read", "checkouts:write"],
+    "environment": "sandbox",
+    "livemode": false
+  },
+  "requestId": "req_xxxxxxxxxxxxxxxxxxxx",
+  "timestamp": "2026-10-21T18:00:00.000Z"
+}
+```
+
+| Campo | Descripción |
+|---|---|
+| `accessToken` | Bearer de corta duración para `/api/v1/client/*`. |
+| `refreshToken` | Credencial rotatoria para obtener un nuevo par. |
+| `accessTokenExpiresAt` | Vencimiento ISO 8601; como máximo 15 minutos desde la emisión. |
+| `refreshTokenExpiresAt` | Vencimiento ISO 8601; como máximo 30 días desde la emisión. |
+| `scopes` | Permisos efectivos de la API key. |
+| `environment` | `sandbox` o `production`; no puede cambiarse con headers o query. |
+| `livemode` | `true` únicamente en Production. |
+
+Ambos vencimientos quedan limitados por la vigencia restante de la API key.
+
+## Renovar tokens
+
+**`POST https://api.altokepay.site/oauth/token`**
+
+```bash
+curl --request POST "https://api.altokepay.site/oauth/token" \
+  --header "Content-Type: application/json" \
+  --data '{"grantType":"refreshToken","refreshToken":"ptpr_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}'
+```
+
+La respuesta `200` tiene la misma forma que el intercambio inicial y contiene un access token **y un refresh token nuevos**.
+
+:::warning[Rotación obligatoria]
+Persiste el nuevo par de forma atómica antes de descartar el anterior. Reutilizar un refresh token ya rotado puede invalidar su familia como defensa contra replay.
+:::
+
+## Verificar el contexto
+
+**`GET https://api.altokepay.site/api/v1/client/auth/me`** · cualquier access token válido
+
+```bash
+curl "https://api.altokepay.site/api/v1/client/auth/me" \
+  --header "Authorization: Bearer $ALTOKEPAY_ACCESS_TOKEN"
+```
+
+Respuesta `200` representativa:
+
+```json
+{
+  "success": true,
+  "data": {
+    "tokenType": "Bearer",
+    "organization": {
+      "id": "33333333-3333-4333-8333-333333333333",
+      "name": "Tienda Demo",
+      "slug": "tienda-demo",
+      "status": "active",
+      "environment": "sandbox",
+      "livemode": false
+    },
+    "apiKey": {
+      "id": "44444444-4444-4444-8444-444444444444",
+      "name": "Ecommerce",
+      "prefix": "ppp_sandbox_abcd1234"
+    },
+    "scopes": ["checkouts:read", "checkouts:write"],
+    "environment": "sandbox",
+    "livemode": false,
+    "accessTokenExpiresAt": "2026-10-21T18:15:00.000Z"
+  },
+  "requestId": "req_xxxxxxxxxxxxxxxxxxxx",
+  "timestamp": "2026-10-21T18:00:01.000Z"
+}
+```
+
+Falla cerrado durante el arranque si la organización, el entorno o los scopes no coinciden con tu configuración.
+
+## Revocar la sesión OAuth
+
+**`POST https://api.altokepay.site/api/v1/client/auth/logout`** · cualquier access token válido
+
+```bash
+curl --request POST "https://api.altokepay.site/api/v1/client/auth/logout" \
+  --header "Authorization: Bearer $ALTOKEPAY_ACCESS_TOKEN" \
+  --header "Content-Type: application/json" \
+  --data '{"refreshToken":"ptpr_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}'
+```
+
+Éxito: `204 No Content`. El access token actual siempre se revoca; el refresh token también se revoca cuando se incluye en el body. El body puede ser `{}`.
+
+## Errores frecuentes
+
+| HTTP | Código | Acción |
+|---:|---|---|
+| `400` | `BAD_REQUEST` / `VALIDATION_ERROR` | Corrige `grantType` o el campo requerido. |
+| `401` | `UNAUTHORIZED` | No reutilices la credencial; renueva o solicita una nueva API key según el caso. |
+| `403` | `FORBIDDEN` | El bearer es válido, pero carece del scope requerido. |
+| `429` | `TOO_MANY_REQUESTS` | Aplica backoff acotado. |
+| `503` | `SERVICE_UNAVAILABLE` | Reintenta con backoff acotado sin cambiar la credencial de la operación. |
+
+Consulta el [envelope completo de errores](./responses-errors.md).
+
+## Siguiente paso
+
+1. Define los [scopes y el entorno](./scopes-environments.md).
+2. Consulta los [métodos de cobro](./payment-methods.md) antes de crear un Checkout.
+3. Implementa [Checkouts](./checkouts.mdx) o [Links de Pago](./payment-links.mdx).

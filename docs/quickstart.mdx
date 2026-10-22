@@ -1,0 +1,53 @@
+---
+sidebar_position: 2
+title: Inicio rápido
+slug: /quickstart
+---
+
+import {TokenExchangeExample} from '@site/src/components/ApiExamples';
+
+Conecta tu backend con la Client API v1. Todas las credenciales y solicitudes autenticadas deben permanecer en el servidor.
+
+## Antes de empezar
+
+Necesitas una API key Sandbox y los scopes del recurso que vas a utilizar.
+
+```bash title=".env"
+ALTOKEPAY_API_KEY=ppp_sandbox_xxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+:::danger[Credenciales privadas]
+No publiques `.env` ni envíes API keys o tokens al navegador. Las rutas `/api/v1/client/*` aceptan `Authorization: Bearer`; no aceptan la API key directamente.
+:::
+
+## 1. Obtén un access token
+
+<TokenExchangeExample />
+
+Guarda el `accessToken` y el `refreshToken` en tu backend. Cuando renueves la sesión, persiste el nuevo par antes de descartar el anterior.
+
+## 2. Verifica el acceso
+
+```bash
+curl "https://api.altokepay.site/api/v1/client/auth/me" \
+  --fail-with-body --show-error --silent \
+  --connect-timeout 5 --max-time 10 \
+  --header "Authorization: Bearer $ALTOKEPAY_ACCESS_TOKEN"
+```
+
+Comprueba que `environment`, `livemode` y `scopes` coincidan con tu configuración antes de crear recursos.
+
+:::note[Ejemplos]
+Los ejemplos incluyen cURL, TypeScript con Bun, PHP, Python y Java 21. Los ejemplos HTTP de Java usan Jackson Databind para JSON.
+:::
+
+## 3. Elige el flujo
+
+- [Checkout](./api/checkouts.mdx): una compra concreta que confirmarás mediante webhook.
+- [Link de Pago](./api/payment-links.mdx): una página alojada que compartirás mediante `publicUrl`.
+
+Para respuestas ambiguas, conserva la misma identidad idempotente y sigue la recuperación documentada para el recurso. No generes una identidad nueva.
+
+:::tip[Ejemplo integral]
+El repositorio [EJEMPLO-DE-INCORPORACION-DE-ALTOKEPAY](https://github.com/Yeferson-gm/EJEMPLO-DE-INCORPORACION-DE-ALTOKEPAY) muestra ambos flujos con Bun y Hono.
+:::

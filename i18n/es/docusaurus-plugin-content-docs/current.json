@@ -1,0 +1,18 @@
+{
+  "version.label": {
+    "message": "v1",
+    "description": "The label for version current"
+  },
+  "sidebar.docsSidebar.category.Conceptos": {
+    "message": "Conceptos",
+    "description": "The label for category 'Conceptos' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Client API": {
+    "message": "Client API",
+    "description": "The label for category 'Client API' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Integración": {
+    "message": "Integración",
+    "description": "The label for category 'Integración' in sidebar 'docsSidebar'"
+  }
+}

@@ -1,0 +1,127 @@
+---
+sidebar_position: 5
+title: Checkouts
+---
+
+import {CheckoutCreateExample} from '@site/src/components/ApiExamples';
+
+Un Checkout representa una compra concreta de tu ecommerce.
+
+## Operaciones
+
+| Método | Endpoint | Scope | Éxito |
+|---|---|---|---|
+| `POST` | `/api/v1/client/checkouts` | `checkouts:write` | `201`; replay `200` |
+| `GET` | `/api/v1/client/checkouts/external/:externalId` | `checkouts:read` | `200` |
+| `GET` | `/api/v1/client/checkouts/:id` | `checkouts:read` | `200` |
+| `GET` | `/api/v1/client/checkouts/:id/status` | `checkouts:read` | `200` |
+| `POST` | `/api/v1/client/checkouts/:id/cancel` | `checkouts:write` | `200` |
+| `POST` | `/api/v1/client/checkouts/:id/retry` | `checkouts:write` | `201` |
+
+## Crear un Checkout
+
+Elige una sola identidad para la persona que pagará:
+
+```json title="Con DNI"
+{
+  "externalId": "order-2026-0001",
+  "providerCode": "yape",
+  "acceptedWalletId": "8ef7b701-0d40-4cf9-b45f-706e34314d8c",
+  "amount": 42.5,
+  "currency": "PEN",
+  "payerDni": "45382026"
+}
+```
+
+```json title="Con nombre completo"
+{
+  "externalId": "order-2026-0002",
+  "providerCode": "yape",
+  "acceptedWalletId": "8ef7b701-0d40-4cf9-b45f-706e34314d8c",
+  "amount": 42.5,
+  "currency": "PEN",
+  "payerName": "María Quispe"
+}
+```
+
+<CheckoutCreateExample />
+
+| Campo | Regla |
+|---|---|
+| `externalId` | Requerido, único y estable para la orden |
+| `providerCode` | Código obtenido desde métodos de cobro |
+| `acceptedWalletId` | UUID compatible devuelto por la API |
+| `amount` | Mínimo `0.01`, máximo dos decimales |
+| `currency` | Moneda soportada por el receptor |
+| `payerDni` o `payerName` | Envía exactamente uno; nunca ambos |
+
+El body es estricto y rechaza campos desconocidos, incluido `metadata`. Con `payerDni`, AltokePay acepta la respuesta del proveedor únicamente si repite el DNI exacto solicitado y devuelve un nombre válido. Si el proveedor no está disponible o responde de forma inválida, recibirás `503 IDENTITY_SERVICE_UNAVAILABLE`.
+
+Puedes reintentar el mismo intento con el mismo `externalId` y payload. Si la creación original ya se confirmó, el replay se recupera sin volver a consultar al proveedor. Si el proveedor DNI falla y decides continuar con `payerName`, crea primero una intención local nueva y usa otro `externalId`; el nombre se normaliza y no se presenta como verificado por DNI. Nunca cambies la identidad de una solicitud cuyo resultado todavía es desconocido.
+
+Respuesta resumida:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "a2fc0915-f6ec-4b2d-9fd1-4470b138b145",
+    "externalId": "order-2026-0001",
+    "providerCode": "yape",
+    "amount": 42.5,
+    "currency": "PEN",
+    "status": "awaiting_payment",
+    "expiresAt": "2026-10-21T18:10:00.000Z"
+  },
+  "requestId": "req_xxxxxxxxxxxxxxxxxxxx"
+}
+```
+
+El DTO completo también incluye la billetera aceptada, instrucciones de pago, timestamps y el recurso visual que debes mostrar cuando corresponda. No devuelve DNI, nombre esperado ni metadata interna.
+
+Un replay con el mismo `externalId` y payload devuelve el recurso original con `200`. Cambiar la variante DNI/nombre, su valor o cualquier otro dato bajo el mismo `externalId` responde `409 IDEMPOTENCY_CONFLICT`.
+
+## Leer y recuperar
+
+```bash
+curl "https://api.altokepay.site/api/v1/client/checkouts/external/order-2026-0001" \
+  --header "Authorization: Bearer $ALTOKEPAY_ACCESS_TOKEN"
+```
+
+Usa esta lectura después de un resultado de creación desconocido. Si responde `404`, repite la creación con el mismo `externalId` y payload.
+
+La lectura `/checkouts/:id/status` devuelve un resumen con `status`, `expiresAt`, `isFinal` y `retryAvailable`. Úsala para carga o recuperación puntual, no para polling.
+
+## Cancelar
+
+`POST /api/v1/client/checkouts/:id/cancel` no requiere body. Devuelve `changed: false` si el Checkout ya estaba cancelado. Un Checkout pagado o expirado responde `409 CONFLICT`.
+
+## Reintentar
+
+`POST /api/v1/client/checkouts/:id/retry` crea un nuevo Checkout. Envía un `externalId` nuevo y persístelo antes de la solicitud:
+
+```json
+{
+  "externalId": "order-2026-0001-retry-1"
+}
+```
+
+Si la respuesta se pierde, busca primero ese nuevo `externalId`. Repite el retry con la misma identidad únicamente después de un `404`.
+
+## Estados y errores
+
+Estados: `awaiting_payment`, `paid`, `expired` y `canceled`.
+
+| HTTP | Código | Acción |
+|---:|---|---|
+| `400` / `422` | `BAD_REQUEST` / `VALIDATION_ERROR` | Corrige los campos |
+| `401` | `UNAUTHORIZED` | Renueva o revisa el token |
+| `403` | `FORBIDDEN` | Añade el scope requerido |
+| `404` | `NOT_FOUND` | Verifica el ID y el entorno |
+| `409` | `IDEMPOTENCY_CONFLICT` | No repitas con esa identidad y datos distintos |
+| `409` | `CONFLICT` | La operación no aplica al estado actual |
+| `503` | `IDENTITY_SERVICE_UNAVAILABLE` | Reintenta igual o crea una intención nueva con `payerName` |
+
+:::important[Confirma mediante webhook]
+Libera productos únicamente después de verificar y procesar `checkout.paid` de forma idempotente.
+:::

@@ -1,0 +1,22 @@
+{
+  "logo.alt": {
+    "message": "AltokePay",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Docs": {
+    "message": "Docs",
+    "description": "Navbar item with label Docs"
+  },
+  "item.label.API": {
+    "message": "API",
+    "description": "Navbar item with label API"
+  },
+  "item.label.Guías": {
+    "message": "Guías",
+    "description": "Navbar item with label Guías"
+  },
+  "item.label.Sitio web": {
+    "message": "Sitio web",
+    "description": "Navbar item with label Sitio web"
+  }
+}

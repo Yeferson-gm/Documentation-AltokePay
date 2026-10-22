@@ -1,0 +1,96 @@
+---
+sidebar_position: 3
+title: Webhooks firmados
+---
+
+import {WebhookVerificationExample} from '@site/src/components/ApiExamples';
+
+AltokePay envía eventos por `POST`. Verifica la firma sobre el body exacto antes de parsear el JSON o modificar una orden.
+
+## Verificación
+
+Headers requeridos:
+
+| Header | Uso |
+|---|---|
+| `X-AltokePay-Webhook-Id` | Identifica el endpoint configurado |
+| `X-AltokePay-Delivery-Id` | Identifica esta entrega concreta |
+| `X-AltokePay-Event-Id` | Identidad estable para deduplicar el evento |
+| `X-AltokePay-Environment` | `sandbox` o `production` |
+| `X-AltokePay-Timestamp` | Unix timestamp incluido en la firma |
+| `X-AltokePay-Signature` | Firma HMAC-SHA-256 hexadecimal |
+| `X-AltokePay-Attempt` | Número de intento de entrega |
+
+El contenido firmado es:
+
+```text
+<timestamp>.<rawBody>
+```
+
+Procesa cada entrega en este orden:
+
+1. Exige una sola representación no vacía de cada header requerido.
+2. Rechaza un timestamp con más de cinco minutos de diferencia.
+3. Calcula HMAC-SHA-256 con tu secreto y compara la firma en tiempo constante.
+4. Parsea y valida el evento solo después de verificar la firma.
+5. Confirma que `payload.id` coincida con `X-AltokePay-Event-Id`, y que el entorno y los datos correspondan a tu orden.
+6. Deduplica `X-AltokePay-Event-Id` y persiste el resultado. Conserva delivery ID e intento para diagnóstico, no como identidad de negocio.
+7. Responde `2xx` después de persistir.
+
+:::danger[Usa el raw body]
+No verifiques JSON reserializado. Cualquier cambio en espacios, orden o codificación modifica los bytes firmados.
+:::
+
+## Ejemplos
+
+<WebhookVerificationExample />
+
+La pestaña cURL muestra los siete headers de una entrega de prueba. Las demás pestañas implementan la verificación criptográfica sobre bytes; el handler también debe exigir los demás headers, validar event ID y entorno, y deduplicar el evento. Conecta `rawBody` al body capturado por tu framework antes del parser JSON.
+
+## Eventos
+
+| Evento | Uso |
+|---|---|
+| `payment.received` | Movimiento recibido; no confirma una orden por sí solo |
+| `checkout.created` | Checkout creado |
+| `checkout.paid` | Pago asociado al Checkout |
+| `checkout.expired` | Checkout expirado |
+| `checkout.canceled` | Checkout cancelado |
+| `checkout.retry_created` | Nuevo Checkout creado como reintento |
+| `payment-link.started` | El pagador inició el Link y el cobro quedó listo |
+| `payment-link.paid` | Pago asociado al Link de Pago |
+| `payment-link.expired` | Link iniciado y expirado sin pago |
+| `payment-link.canceled` | Link iniciado y cancelado |
+
+`webhook.ping` es una entrega manual de prueba. Los Links de Pago usan `payment-link.*`; no producen eventos `checkout.*`.
+
+## Payload
+
+```json title="checkout.paid"
+{
+  "id": "3f42c9d8-d274-4cec-b9a6-f08d686d23a1",
+  "type": "checkout.paid",
+  "environment": "sandbox",
+  "livemode": false,
+  "createdAt": "2026-10-21T18:03:00.000Z",
+  "data": {
+    "checkout": {
+      "id": "a2fc0915-f6ec-4b2d-9fd1-4470b138b145",
+      "externalId": "order-2026-0001",
+      "amount": 42.5,
+      "currency": "PEN",
+      "status": "paid"
+    }
+  }
+}
+```
+
+Valida como mínimo el event ID, el entorno, el tipo y los datos del recurso. Una firma válida autentica la entrega, pero no sustituye tus validaciones de negocio.
+
+:::info[Antes del pago]
+Configura el endpoint y su suscripción antes de compartir el cobro. Al iniciar un Link, AltokePay persiste la sesión y `payment-link.started` antes de devolver el QR; la entrega HTTP es asíncrona y nunca bloquea al pagador.
+:::
+
+:::info[Reintentos]
+Una entrega puede repetirse. Deduplica por `X-AltokePay-Event-Id` y devuelve `2xx` para un evento válido ya procesado sin repetir efectos.
+:::
