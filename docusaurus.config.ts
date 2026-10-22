@@ -4,7 +4,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 const siteUrl = process.env.DOCUSAURUS_URL ?? 'https://development.altokepay.site';
 const baseUrl = process.env.DOCUSAURUS_BASE_URL ?? '/';
-const quickstartUrl = `${baseUrl}docs/1/quickstart`;
+const quickstartUrl = `${baseUrl}docs/v1/quickstart`;
 
 const config: Config = {
   title: 'AltokePay Developer Docs',
