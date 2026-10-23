@@ -73,7 +73,7 @@ export default function Home(): ReactNode {
             </p>
             <div className={styles.actions}>
               <Link className="button button--primary button--lg" to="/docs/v1/intro">
-                Empezar
+                Empezar con AltokePay
               </Link>
               <Link className="button button--outline button--lg" to="/docs/v1/api">
                 Explorar la API
