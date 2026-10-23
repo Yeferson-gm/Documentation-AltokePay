@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 title: Seguridad de la integración
+description: Protege credenciales, valida webhooks y aplica idempotencia al integrar AltokePay desde tu backend.
 ---
 
 Aplica estos controles en tu backend antes de usar Production.

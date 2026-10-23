@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: Arquitectura de integración
+description: Entiende la autoridad del backend, los límites de confianza y los flujos de Checkout y Link de Pago.
 slug: /architecture
 ---
 

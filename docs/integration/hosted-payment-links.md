@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 title: Links de Pago alojados
+description: Integra la experiencia alojada de Links de Pago y comparte la URL pública generada sin modificarla.
 ---
 
 Un Link de Pago devuelve una `publicUrl` administrada por AltokePay. Tu backend crea el recurso y comparte esa URL sin modificarla.

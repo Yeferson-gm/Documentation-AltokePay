@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: Client API v1
+description: Referencia pública de autenticación, Checkouts, Links de Pago, scopes, respuestas y errores de AltokePay.
 slug: /api
 ---
 

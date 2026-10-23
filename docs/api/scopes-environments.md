@@ -1,6 +1,7 @@
 ---
 sidebar_position: 3
 title: Scopes y entornos
+description: Configura permisos mínimos y separa correctamente credenciales Production y Sandbox en AltokePay.
 ---
 
 

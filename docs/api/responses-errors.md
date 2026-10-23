@@ -1,6 +1,7 @@
 ---
 sidebar_position: 7
 title: Respuestas y errores
+description: Interpreta envelopes, códigos HTTP y errores de la Client API para recuperar solicitudes de forma segura.
 ---
 
 Evalúa el status HTTP y el envelope JSON antes de usar `data` o decidir un retry.

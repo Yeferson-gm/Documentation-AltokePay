@@ -40,6 +40,12 @@ const config: Config = {
           },
         },
         blog: false,
+        sitemap: {
+          changefreq: null,
+          priority: null,
+          lastmod: 'date',
+          ignorePatterns: ['/search/**'],
+        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -61,11 +67,34 @@ const config: Config = {
       },
     ],
   ],
+  headTags: [
+    {
+      tagName: 'link',
+      attributes: {rel: 'describedby', href: `${baseUrl}llms.txt`},
+    },
+    {
+      tagName: 'link',
+      attributes: {rel: 'sitemap', type: 'application/xml', href: `${baseUrl}sitemap.xml`},
+    },
+  ],
   themeConfig: {
     image: 'img/altokepay-social.png',
     metadata: [
       {name: 'theme-color', content: '#087f5b'},
+      {property: 'og:type', content: 'website'},
+      {property: 'og:site_name', content: 'AltokePay Developer Docs'},
+      {property: 'og:locale', content: 'es_PE'},
+      {
+        property: 'og:image:alt',
+        content: 'Documentación técnica para integrar la Client API de AltokePay',
+      },
+      {property: 'og:image:width', content: '1200'},
+      {property: 'og:image:height', content: '630'},
       {name: 'twitter:card', content: 'summary_large_image'},
+      {
+        name: 'twitter:image:alt',
+        content: 'Documentación técnica para integrar la Client API de AltokePay',
+      },
     ],
     docs: {
       versionPersistence: 'localStorage',

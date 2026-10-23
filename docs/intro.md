@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: Integra AltokePay
+description: Conoce los flujos públicos de AltokePay y el recorrido recomendado para integrar cobros con contratos claros.
 slug: /intro
 ---
 

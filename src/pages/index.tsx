@@ -1,3 +1,4 @@
+import Head from '@docusaurus/Head';
 import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import Layout from '@theme/Layout';
@@ -28,12 +29,37 @@ const sections = [
   },
 ] as const;
 
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': 'https://development.altokepay.site/#website',
+      url: 'https://development.altokepay.site/',
+      name: 'AltokePay Developer Docs',
+      description: 'Documentación pública para integrar la Client API v1 de AltokePay.',
+      inLanguage: 'es-PE',
+      publisher: {'@id': 'https://development.altokepay.site/#organization'},
+    },
+    {
+      '@type': 'Organization',
+      '@id': 'https://development.altokepay.site/#organization',
+      name: 'AltokePay',
+      url: 'https://altokepay.site/',
+      logo: 'https://development.altokepay.site/img/altokepay-mark.png',
+    },
+  ],
+};
+
 export default function Home(): ReactNode {
   return (
     <Layout
       title="Documentación técnica"
-      description="Contratos, arquitectura y guías de integración de AltokePay"
+      description="Integra la Client API v1 de AltokePay con Checkouts, Links de Pago y webhooks firmados."
     >
+      <Head>
+        <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
+      </Head>
       <main>
         <header className={styles.hero}>
           <div className={styles.heroInner}>

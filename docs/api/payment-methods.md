@@ -1,6 +1,7 @@
 ---
 sidebar_position: 4
 title: Métodos de cobro para Checkout
+description: Consulta proveedores y billeteras receptoras compatibles antes de crear un Checkout en AltokePay.
 ---
 
 

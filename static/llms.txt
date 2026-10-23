@@ -1,0 +1,35 @@
+# AltokePay Developer Docs
+
+> Documentación pública en español para integrar la Client API v1 de AltokePay mediante Checkouts, Links de Pago y webhooks firmados.
+
+AltokePay estructura señales de pago compatibles y comunica eventos operativos. El backend del integrador debe conservar sus credenciales, crear recursos de forma idempotente y confirmar resultados mediante webhooks firmados. AltokePay no procesa, custodia ni liquida dinero y no sustituye a una entidad financiera.
+
+La API pública usa `https://api.altokepay.site`. Las credenciales determinan el entorno Production o Sandbox. No existe un selector de entorno en el payload. Para la identidad del pagador, cada intención acepta exclusivamente DNI o nombre completo, nunca ambos. No uses polling para confirmar pagos.
+
+## Primeros pasos
+
+- [Introducción](https://development.altokepay.site/docs/v1/intro): alcance del producto y recorrido recomendado.
+- [Inicio rápido](https://development.altokepay.site/docs/v1/quickstart): autenticación server-side y elección del flujo de cobro.
+- [Arquitectura de integración](https://development.altokepay.site/docs/v1/architecture): autoridad del backend y límites de confianza.
+- [Seguridad](https://development.altokepay.site/docs/v1/architecture/security): manejo de credenciales, idempotencia y webhooks.
+
+## Client API v1
+
+- [Referencia de la Client API](https://development.altokepay.site/docs/v1/api): recursos y flujo recomendado.
+- [Autenticación OAuth](https://development.altokepay.site/docs/v1/api/authentication): intercambio y renovación de tokens.
+- [Scopes y entornos](https://development.altokepay.site/docs/v1/api/scopes-environments): permisos mínimos y separación Production/Sandbox.
+- [Métodos de cobro](https://development.altokepay.site/docs/v1/api/payment-methods): receptores compatibles para Checkout.
+- [Checkouts](https://development.altokepay.site/docs/v1/api/checkouts): creación, lectura, cancelación, retry e identidad DNI o nombre.
+- [Links de Pago](https://development.altokepay.site/docs/v1/api/payment-links): creación y operación de páginas de cobro alojadas.
+- [Respuestas y errores](https://development.altokepay.site/docs/v1/api/responses-errors): envelopes, códigos y recuperación segura.
+
+## Integración
+
+- [Patrón de integración](https://development.altokepay.site/docs/v1/integration): secuencia server-side recomendada.
+- [Links de Pago alojados](https://development.altokepay.site/docs/v1/integration/hosted-payment-links): uso correcto de `publicUrl`.
+- [Webhooks firmados](https://development.altokepay.site/docs/v1/integration/webhooks): eventos, headers y verificación.
+- [Checklist de producción](https://development.altokepay.site/docs/v1/integration/production-checklist): controles previos a Production.
+
+## Ejemplo
+
+- [Ejemplo completo de incorporación](https://github.com/Yeferson-gm/EJEMPLO-DE-INCORPORACION-DE-ALTOKEPAY): implementación de referencia con credenciales server-side, webhooks y recuperación sin polling.

@@ -1,6 +1,7 @@
 ---
 sidebar_position: 4
 title: Checklist de producción
+description: Revisa seguridad, idempotencia, webhooks y recuperación antes de habilitar credenciales Production.
 ---
 
 Completa el flujo en Sandbox antes de habilitar credenciales Production.

@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: Patrón de integración
+description: Implementa Checkouts y Links de Pago desde tu backend con idempotencia, timeouts y webhooks firmados.
 slug: /integration
 ---
 
