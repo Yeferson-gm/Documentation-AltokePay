@@ -56,7 +56,8 @@ Los archivos estáticos de descubrimiento son:
 - `/robots.txt`: permite la documentación, excluye resultados internos de búsqueda y anuncia el sitemap index;
 - `/sitemap.xml`: generado por el plugin oficial de Docusaurus, sin `priority` ni `changefreq` arbitrarios;
 - `/sitemap-index.xml`: referencia estable para herramientas que esperan un índice;
-- `/llms.txt`: recorrido público y conciso para agentes, separado de robots y sitemap.
+- `/llms.txt`: recorrido público y conciso para agentes, separado de robots y sitemap;
+- `static/_headers`: declara `llms.txt` como UTF-8 para preservar el español en navegadores y agentes.
 
 Estos archivos solo enlazan contratos públicos bajo `/docs/v1/*`. No deben incluir rutas internas, secretos, endpoints Admin, capacidades de pago ni detalles de infraestructura.
 
