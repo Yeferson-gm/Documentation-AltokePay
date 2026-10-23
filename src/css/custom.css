@@ -93,6 +93,10 @@
   background: var(--altokepay-purple-soft);
 }
 
+.breadcrumbs__item--active .breadcrumbs__link {
+  color: var(--ifm-color-primary-dark);
+}
+
 .navbar-github-example {
   display: inline-flex;
   align-items: center;
